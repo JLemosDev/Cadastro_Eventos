@@ -1,0 +1,79 @@
+@baseUrl = http://127.0.0.1:8080
+
+### 1) Antes de tudo, cadastre um evento (a pessoa precisa de um evento existente)
+POST {{baseUrl}}/eventos
+Content-Type: application/json
+
+{"titulo":"Festival de Música","capacidade":300}
+
+### Cadastrar pessoa (201 e Location)
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Ana Souza","email":"ana@email.com","eventoId":1}
+
+### Cadastrar outra pessoa
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Bruno Lima","email":"bruno@email.com","eventoId":1}
+
+### Listar pessoas
+GET {{baseUrl}}/pessoas
+
+### Filtrar por parte do nome, sem distinguir caixa
+GET {{baseUrl}}/pessoas?nome=ana
+
+### Consultar por ID (use o ID retornado no cadastro)
+GET {{baseUrl}}/pessoas/1
+
+### Atualizar preservando o ID
+PUT {{baseUrl}}/pessoas/1
+Content-Type: application/json
+
+{"nome":"Ana Souza Lima","email":"ana.lima@email.com","eventoId":1}
+
+### Nome em branco: 400
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"   ","email":"ana@email.com","eventoId":1}
+
+### E-mail vazio: 400
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Ana","email":"","eventoId":1}
+
+### E-mail inválido: 400
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Ana","email":"ana-sem-arroba","eventoId":1}
+
+### eventoId igual a zero: 400
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Ana","email":"ana@email.com","eventoId":0}
+
+### Evento inexistente: 422
+POST {{baseUrl}}/pessoas
+Content-Type: application/json
+
+{"nome":"Ana","email":"ana@email.com","eventoId":9999}
+
+### Atualização inválida (e-mail inválido): 400, não altera a pessoa
+PUT {{baseUrl}}/pessoas/1
+Content-Type: application/json
+
+{"nome":"Ana","email":"invalido","eventoId":1}
+
+### ID inexistente: 404
+GET {{baseUrl}}/pessoas/9999
+
+### Excluir: 204 sem corpo
+DELETE {{baseUrl}}/pessoas/1
+
+### Excluir inexistente: 404
+DELETE {{baseUrl}}/pessoas/9999

@@ -1,0 +1,6 @@
+{
+  "name": "cadastro-eventos-ui-tests",
+  "private": true,
+  "scripts": { "test:ui": "playwright test" },
+  "devDependencies": { "playwright": "1.57.0" }
+}

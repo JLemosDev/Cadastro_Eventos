@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eventos · Centro Cultural</title>
+  <script src="/assets/theme.js"></script>
+  <link rel="stylesheet" href="/assets/eventos.css">
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner">
+    <span class="brand-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 9h16M5 9v11m5-11v11m4-11v11m5-11v11M3 20h18M3 7l9-4 9 4v2H3z"/></svg></span>
+    <span class="brand">Centro Cultural</span><button id="theme-toggle" type="button" aria-label="Ativar tema claro">☀ Tema claro</button><span class="top-label">Acervo de eventos</span>
+  </div></header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">Programação & cultura</p><h1>Seus eventos, em um lugar.</h1><p class="subtitle">Explore e encontre os eventos cadastrados.</p></div>
+      <div class="heading-actions"><button id="new-event" class="primary" type="button">+ Novo evento</button><button id="refresh" class="refresh" type="button"><span aria-hidden="true">↻</span> Atualizar</button></div>
+    </div>
+    <section class="stats" aria-label="Resumo dos cadastros">
+      <div class="stat"><span class="stat-label">Eventos cadastrados</span><span id="total" class="stat-value">—</span></div>
+      <div class="stat"><span class="stat-label">Capacidade total</span><span id="participants" class="stat-value">—</span></div>
+      <div class="stat"><span class="stat-label">Pessoas inscritas</span><span id="matches" class="stat-value">—</span></div>
+    </section>
+    <details class="terminal panel" open>
+      <summary>›_ Terminal da API</summary>
+      <p class="terminal-hint">Digite uma requisição e pressione Enter. Use <code>ajuda</code> para ver exemplos de todas as ações.</p>
+      <div class="terminal-tools" aria-label="Exemplos de comandos">
+        <button type="button" data-command="GET /eventos">Listar eventos</button>
+        <button type="button" data-command='POST /eventos {"titulo":"Novo evento","capacidade":100}'>Cadastrar evento</button>
+        <button type="button" data-command="GET /pessoas">Listar pessoas</button>
+        <button type="button" data-command="ajuda">Ajuda</button>
+        <button id="terminal-clear" type="button">Limpar saída</button>
+      </div>
+      <div id="terminal-output" class="terminal-output" role="log" aria-label="Respostas da API" aria-live="polite" aria-relevant="additions"></div>
+      <form id="terminal-form" class="terminal-form">
+        <label for="terminal-command"><span aria-hidden="true">›</span><span hidden>Comando da API</span></label>
+        <input id="terminal-command" aria-label="Comando da API" placeholder='GET /eventos' autocomplete="off" spellcheck="false" required>
+        <button id="terminal-run" type="submit">Executar</button>
+      </form>
+      <p class="terminal-help">↑ e ↓ recuperam comandos anteriores. As alterações em eventos atualizam a tabela automaticamente.</p>
+    </details>
+    <p id="notice" role="status" class="notice" hidden></p>
+    <p id="error" class="error" role="alert" hidden></p>
+    <section class="panel" aria-label="Lista de eventos" id="panel" aria-busy="true">
+      <div class="toolbar">
+        <div class="search-field"><label for="search">Buscar evento</label><div class="search-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <input id="search" type="search" placeholder="Digite o título ou o ID do evento" autocomplete="off">
+        </div></div>
+        <div class="sort-field"><label for="sort">Ordenar por</label><select id="sort"><option value="id">ID crescente</option><option value="newest">ID decrescente</option><option value="title">Título A–Z</option><option value="capacidade">Maior capacidade</option><option value="inscritos">Mais inscritos</option><option value="data">Data do evento</option></select></div>
+        <div><label for="category">Categoria</label><input id="category" placeholder="Todas" maxlength="80"></div><div><label for="period">Período</label><select id="period"><option value="">Todos</option><option value="futuros">Futuros e hoje</option><option value="passados">Passados</option><option value="sem-data">Sem data</option></select></div>
+        <div><label for="size">Por página</label><select id="size"><option>25</option><option>50</option><option>100</option></select></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th scope="col">ID</th><th scope="col">Evento</th><th scope="col">Data</th><th scope="col">Inscritos / capacidade</th><th scope="col">Ações</th></tr></thead><tbody id="rows"><tr><td colspan="5" class="empty">Carregando eventos…</td></tr></tbody></table></div>
+      <div class="pagination"><span id="range" role="status" aria-live="polite">Consultando cadastros…</span><nav class="page-controls" aria-label="Paginação"><button id="previous" type="button" disabled aria-label="Página anterior">← Anterior</button><span id="page">—</span><button id="next" type="button" disabled aria-label="Próxima página">Próxima →</button></nav></div>
+    </section>
+    <footer><span id="updated">Dados carregados da sua API local.</span><a href="/eventos" target="_blank" rel="noopener">Ver dados em JSON ↗</a></footer>
+  </main>
+
+
+  <dialog id="event-dialog" aria-labelledby="event-dialog-title">
+    <div class="dialog-heading"><h2 id="event-dialog-title">Novo evento</h2><button type="button" data-close="event-dialog" aria-label="Fechar formulário de evento">×</button></div>
+    <form id="event-form">
+      <input type="hidden" id="event-id">
+      <div class="form-grid">
+        <div class="full"><label for="event-title">Título *</label><input id="event-title" required maxlength="200"></div>
+        <div><label for="event-capacity">Capacidade *</label><input id="event-capacity" type="number" min="1" max="5000" required></div>
+        <div><label for="event-category">Categoria</label><input id="event-category" maxlength="80" placeholder="Teatro, Música, Exposição…"></div>
+        <div><label for="event-date">Data</label><input id="event-date" type="date"></div>
+        <div><label for="event-time">Horário</label><input id="event-time" type="time"></div>
+        <div class="full"><label for="event-location">Local</label><input id="event-location" maxlength="200"></div>
+        <div class="full"><label for="event-description">Descrição</label><textarea id="event-description" rows="4" maxlength="5000"></textarea></div>
+      </div>
+      <p id="event-error" role="alert" class="error" hidden></p>
+      <div class="dialog-actions"><button type="button" data-close="event-dialog">Cancelar</button><button id="event-save" type="submit" class="primary">Salvar evento</button></div>
+    </form>
+  </dialog>
+  <dialog id="people-dialog" aria-labelledby="people-title">
+    <div class="dialog-heading"><h2 id="people-title">Pessoas inscritas</h2><button type="button" data-close="people-dialog" aria-label="Fechar inscrições">×</button></div>
+    <p id="people-summary" role="status"></p>
+    <form id="person-form" class="form-grid">
+      <input type="hidden" id="person-id">
+      <div><label for="person-name">Nome *</label><input id="person-name" required maxlength="200"></div>
+      <div><label for="person-email">E-mail *</label><input id="person-email" type="email" required maxlength="254"></div>
+      <div><label for="person-event">ID do evento de destino *</label><input id="person-event" type="number" min="1" required></div>
+      <div class="person-actions"><button type="button" id="person-cancel">Limpar</button><button id="person-save" type="submit" class="primary">Inscrever pessoa</button></div>
+    </form>
+    <p id="people-error" role="alert" class="error" hidden></p>
+    <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Ações</th></tr></thead><tbody id="people-rows"></tbody></table></div>
+  </dialog>
+  <dialog id="delete-dialog" aria-labelledby="delete-title">
+    <h2 id="delete-title">Confirmar exclusão</h2><p id="delete-message"></p>
+    <form id="delete-form"><p id="delete-error" role="alert" class="error" hidden></p><div class="dialog-actions"><button type="button" data-close="delete-dialog">Cancelar</button><button id="delete-confirm" class="danger" type="submit">Excluir</button></div></form>
+  </dialog>
+  <script type="module" src="/assets/eventos.js"></script>
+</body>
+</html>

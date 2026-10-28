@@ -1,0 +1,67 @@
+@baseUrl = http://127.0.0.1:8080
+
+### Saúde
+GET {{baseUrl}}/health
+
+### Cadastrar evento (201 e Location)
+POST {{baseUrl}}/eventos
+Content-Type: application/json
+
+{"titulo":"Festival de Música","capacidade":5000}
+
+### Listar eventos
+GET {{baseUrl}}/eventos
+
+### Filtrar por parte do título, sem distinguir caixa (MÚS)
+GET {{baseUrl}}/eventos?titulo=M%C3%9AS
+
+### Consultar por ID (use o ID retornado no cadastro)
+GET {{baseUrl}}/eventos/1
+
+### Atualizar preservando o ID
+PUT {{baseUrl}}/eventos/1
+Content-Type: application/json
+
+{"titulo":"Mostra de Teatro","capacidade":250}
+
+### Título inválido: 400
+POST {{baseUrl}}/eventos
+Content-Type: application/json
+
+{"titulo":"   ","capacidade":100}
+
+### Número inválido: 400
+PUT {{baseUrl}}/eventos/1
+Content-Type: application/json
+
+{"titulo":"Mostra de Teatro","capacidade":0}
+
+### Regra de negócio: 422 (não altera o evento)
+PUT {{baseUrl}}/eventos/1
+Content-Type: application/json
+
+{"titulo":"Mostra de Teatro","capacidade":5001}
+
+### Cadastrar com 422 (acima do limite de 5000)
+POST {{baseUrl}}/eventos
+Content-Type: application/json
+
+{"titulo":"Mega Festival","capacidade":5001}
+
+### Título ausente: 400
+POST {{baseUrl}}/eventos
+Content-Type: application/json
+
+{"capacidade":100}
+
+### ID inexistente: 404
+GET {{baseUrl}}/eventos/9999
+
+### ID não numérico: 400
+GET {{baseUrl}}/eventos/abc
+
+### Excluir: 204 sem corpo
+DELETE {{baseUrl}}/eventos/1
+
+### Consultar removido: 404
+GET {{baseUrl}}/eventos/1
