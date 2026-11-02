@@ -1,4 +1,5 @@
 /target/
-/data/
+/data/*
+!/data/cadastro-eventos.db
 /node_modules/
 /.hallmark/

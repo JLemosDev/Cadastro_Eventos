@@ -154,7 +154,7 @@ O arquivo principal é **data/cadastro-eventos.db**, relativo ao diretório de e
 
 Na primeira execução, eventos.json e pessoas.json, quando presentes na pasta configurada, são importados numa única transação. IDs e sequências são preservados. A migração é marcada no banco e não se repete ao reiniciar, mesmo se registros importados forem excluídos. Os JSONs originais continuam no disco, mas deixam de receber atualizações. Arquivos inválidos ou vínculos incompatíveis interrompem a migração sem apagar os originais; corrija os dados e reinicie.
 
-Os **5.000 eventos fictícios locais** são preservados pela migração. Banco, JSONs e backups ficam fora do Git: uma cópia limpa do repositório começa sem cadastros.
+O repositório inclui **data/cadastro-eventos.db com 5.000 eventos fictícios**, sem pessoas inscritas, para experimentar o painel imediatamente. Execute o JAR a partir da raiz do projeto para carregar esse banco. JSONs antigos, backups e arquivos auxiliares do SQLite continuam fora do Git. O banco de exemplo é versionado; alterações nos cadastros locais podem aparecer como modificações nesse arquivo. Para trabalhar com um banco separado e inicialmente vazio, configure outro data.directory.
 
 Para backup manual, **pare a aplicação e copie a pasta de dados inteira**. Restaure-a com a aplicação parada. Não copie somente o JSON antigo esperando recuperar alterações feitas depois da migração. Para reverter a implantação, mantenha também a versão anterior do JAR junto com os JSONs originais.
 
