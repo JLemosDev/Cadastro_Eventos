@@ -35,6 +35,10 @@ A paleta usa azul meia-noite **#1A2930**, azul profundo **#1B263B** e laranja vi
 
 Os arquivos da interface ficam em [src/main/resources/static](src/main/resources/static): HTML, CSS, tema, cliente HTTP, painel e terminal em arquivos separados, sem etapa de compilação de frontend.
 
+### Visual editorial com Hallmark
+
+O painel usa títulos em Zilla Slab, controles em Source Sans 3 e divisórias simples, preservando o azul e o laranja do projeto e a preferência de tema. A lista de eventos aparece antes do terminal; no celular, cada registro apresenta os campos com seus rótulos. Os dados SQLite e as funcionalidades existentes foram preservados. As fontes têm alternativas locais quando Google Fonts não estiver disponível.
+
 ## Eventos e inscrições
 
 | Campo de evento | Regra |

@@ -25,7 +25,7 @@ public final class InfoController {
 
     @Route(method = "GET", path = "/assets/{name}")
     public HttpResult resource(@PathVariable("name") String name) throws IOException {
-        if (!java.util.Set.of("eventos.css", "eventos.js", "theme.js", "terminal.js", "api.js").contains(name))
+        if (!java.util.Set.of("tokens.css", "base.css", "eventos.css", "eventos.js", "theme.js", "terminal.js", "api.js").contains(name))
             throw new br.com.minispring.framework.web.HttpException(404, "Arquivo não encontrado");
         return asset(name, name.endsWith(".css") ? "text/css" : "text/javascript");
     }

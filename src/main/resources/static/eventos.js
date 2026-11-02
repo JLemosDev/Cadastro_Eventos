@@ -22,13 +22,14 @@ function render(data) {
   for (const event of events) {
     const row = document.createElement('tr'), title = cell(event.titulo);
     const subtitle = document.createElement('small'); subtitle.className = 'row-detail';
-    subtitle.textContent = [event.categoria, event.local].filter(Boolean).join(' · '); title.append(subtitle);
+    subtitle.textContent = [event.categoria, event.local].filter(Boolean).join(', '); title.append(subtitle);
     const occupancy = cell(''), badge = document.createElement('span'); badge.className = 'badge';
     badge.textContent = `${number.format(event.inscritos)} / ${number.format(event.capacidade)}`; occupancy.append(badge);
     const actions = cell('', 'row-actions');
     actions.append(action('Editar', () => editEvent(event)), action('Pessoas', () => openPeople(event)),
       action('Excluir', () => confirmDelete(`/eventos/${event.id}`, `Excluir o evento “${event.titulo}”?`, false), 'danger'));
-    row.append(cell('#' + event.id), title, cell(formatDate(event.data) + (event.horario ? ' · ' + event.horario : '')), occupancy, actions);
+    row.append(cell('#' + event.id), title, cell(formatDate(event.data) + (event.horario ? ' às ' + event.horario : '')), occupancy, actions);
+    ['ID', 'Evento', 'Data', 'Inscritos / capacidade', 'Ações'].forEach((label, index) => row.children[index]?.setAttribute('data-label', label));
     rows.append(row);
   }
   if (!events.length) { const row = document.createElement('tr'), td = cell('Nenhum evento encontrado. Ajuste os filtros ou cadastre um novo evento.', 'empty'); td.colSpan = 5; row.append(td); rows.append(row); }
@@ -94,8 +95,8 @@ async function refreshPeople() {
   const [event, list] = await Promise.all([api('/eventos/' + id), api('/pessoas?eventoId=' + id)]);
   if (selectedEvent?.id !== id) return;
   selectedEvent = event; people = list;
-  el('people-title').textContent = 'Inscrições · ' + event.titulo;
-  el('people-summary').textContent = `${event.inscritos} inscritos de ${event.capacidade} vagas · ${event.capacidade - event.inscritos} disponíveis`;
+  el('people-title').textContent = 'Inscrições: ' + event.titulo;
+  el('people-summary').textContent = `${event.inscritos} inscritos de ${event.capacidade} vagas, ${event.capacidade - event.inscritos} disponíveis`;
   const rows = document.createDocumentFragment();
   for (const person of people) {
     const row = document.createElement('tr'), actions = cell('', 'row-actions');
@@ -103,14 +104,15 @@ async function refreshPeople() {
       el('person-id').value = person.id; el('person-name').value = person.nome; el('person-email').value = person.email;
       el('person-event').value = person.eventoId; el('person-save').textContent = 'Salvar pessoa'; el('person-name').focus(); errorAt('people-error', '');
     }), action('Excluir', () => confirmDelete('/pessoas/' + person.id, `Excluir a inscrição de “${person.nome}”?`, true), 'danger'));
-    row.append(cell(person.nome), cell(person.email), actions); rows.append(row);
+    row.append(cell(person.nome), cell(person.email), actions);
+    ['Nome', 'E-mail', 'Ações'].forEach((label, index) => row.children[index].setAttribute('data-label', label)); rows.append(row);
   }
   if (!people.length) { const row = document.createElement('tr'), td = cell('Nenhuma pessoa inscrita neste evento.', 'empty'); td.colSpan = 3; row.append(td); rows.append(row); }
   el('people-rows').replaceChildren(rows);
 }
 async function openPeople(event) {
   selectedEvent = event; resetPerson(); el('people-dialog').showModal();
-  el('people-title').textContent = 'Inscrições · ' + event.titulo; el('people-summary').textContent = 'Carregando…'; el('people-rows').replaceChildren();
+  el('people-title').textContent = 'Inscrições: ' + event.titulo; el('people-summary').textContent = 'Carregando…'; el('people-rows').replaceChildren();
   try { await refreshPeople(); } catch (error) { errorAt('people-error', error.message); }
 }
 el('person-form').addEventListener('submit', async event => {

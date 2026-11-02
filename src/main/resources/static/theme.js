@@ -6,6 +6,6 @@
   
 document.addEventListener('DOMContentLoaded', () => {
 const button=document.getElementById('theme-toggle');
-function update(){const dark=document.documentElement.dataset.theme==='dark';button.textContent=dark?'☀ Tema claro':'☾ Tema escuro';button.setAttribute('aria-label',dark?'Ativar tema claro':'Ativar tema escuro');}
+function update(){const dark=document.documentElement.dataset.theme==='dark';button.textContent=dark?'Tema claro':'Tema escuro';button.setAttribute('aria-label',dark?'Ativar tema claro':'Ativar tema escuro');}
 button.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('eventos-theme',theme);}catch(_){} update();});update();
 });
